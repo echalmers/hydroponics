@@ -104,5 +104,39 @@ void process_comms() {
       Serial.println(sampleLightSensor((arg=="True")));
     }
     
+    // write a pump motor constant to EEPROM
+    // format should be: setMotorConstant [pump_no] [constant]
+    else if (command == "setMotorConstant") {
+      long pump_no = arg.substring(0, arg.indexOf(' ')).toInt();
+      long constant = arg.substring(arg.indexOf(' ') + 1).toInt();
+      // write to eeprom
+    }
+    
+    // read a pump motor constant to EEPROM
+    // format should be: getMotorConstant [pump_no] [constant]
+    else if (command == "getMotorConstant") {
+      long pump_no = arg.substring(0, arg.indexOf(' ')).toInt();
+      long constant = arg.substring(arg.indexOf(' ') + 1).toInt();
+      // read from eeprom and return value
+    }
+    
+    // dispense for a certain time
+    // format should be: dispenseMilliseconds [pump_no] [milliseconds]
+    else if (command == "dispenseMilliseconds") {
+      long pump_no = arg.substring(0, arg.indexOf(' ')).toInt();
+      long milliseconds = arg.substring(arg.indexOf(' ') + 1).toInt();
+      dispenseMilliseconds(pump_no, milliseconds);
+      Serial.println(0x06);
+    }
+    
+    // dispense a certain amount
+    // format should be: dispenseMilliliters [pump_no] [milliliters]
+    else if (command == "dispenseMilliliters") {
+      long pump_no = arg.substring(0, arg.indexOf(' ')).toInt();
+      long milliliters = arg.substring(arg.indexOf(' ') + 1).toInt();
+      dispenseMilliliters(pump_no, milliliters);
+      Serial.println(0x06);
+    }
+    
   }
 }

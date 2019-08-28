@@ -15,6 +15,8 @@
 unsigned long reference_time;
 unsigned long reference_millis;
 
+int pump_control_pins[3][2] = { {2, 3}, {-1, -1}, {-1, -1} };
+
 bool time_set = false;
 
 float light_value = -1;
@@ -81,3 +83,40 @@ int sampleLightSensor(bool daylight_only) {
   if (daylight_only) { digitalWrite(LIGHT_CONTROL_PIN, currentState); }
   return sample;
 }
+
+void dispenseMilliseconds(int pump_no, long milliseconds) {
+  float clearing_time = 4000;
+  
+  // lookup the control pins for the specified pump number
+  int PUMP_PIN1 = pump_control_pins[pump_no][0];
+  int PUMP_PIN2 = pump_control_pins[pump_no][1];
+  
+  if(PUMP_PIN2 == -1) {
+       //Activate the peristaltic pump for the activation time
+       digitalWrite(PUMP_PIN1, HIGH);
+       delay(milliseconds);
+       //Do I need to reverse this pump?
+       digitalWrite(PUMP_PIN1, LOW);
+    } else {
+       //Activate the peristaltic pump for the activation time
+       digitalWrite(PUMP_PIN1, HIGH);
+       digitalWrite(PUMP_PIN2, LOW);
+       delay(milliseconds);
+
+       //Reverse the pump to clear it for the duration of the clearing time
+       digitalWrite(PUMP_PIN1, LOW);
+       digitalWrite(PUMP_PIN2, HIGH);
+       delay(clearing_time);
+
+       //Turn off the pump
+       digitalWrite(PUMP_PIN1, LOW);
+       digitalWrite(PUMP_PIN2, LOW);
+    }
+}
+
+void dispenseMilliliters(int pump_no, long milliliters) {
+  // read the motor constant for this motor from EEPROM
+  long milliseconds;
+  // calculate the milliseconds to run: millilitres * constant / 1000
+  dispenseMilliseconds(pump_no, milliseconds);
+} 
