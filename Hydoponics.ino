@@ -4,9 +4,11 @@
 #define light_threshold_address 4
 #define light_on_time_address 8
 #define light_off_time_address 12
+#define ebb_flow_pump_interval_address 16
+#define ebb_flow_pump_activation_address 20
 #define data_start_address 64
 
-#define INDICATOR_PIN 13
+#define EBB_FLOW_PUMP_PIN 13
 #define LIGHT_CONTROL_PIN 10
 #define LIGHT_SENSOR_PIN 7
 
@@ -14,6 +16,9 @@
 
 unsigned long reference_time;
 unsigned long reference_millis;
+
+unsigned long ebb_flow_pump_change_millis = 4000;
+bool ebb_flow_pump_is_on = 0;
 
 bool time_set = false;
 
@@ -23,8 +28,9 @@ unsigned long last_light_sample_time = 0;
 void setup() {
 
   Serial.begin(9600); // opens serial port, sets data rate to 9600 bps
-  pinMode(INDICATOR_PIN, OUTPUT);
+  pinMode(EBB_FLOW_PUMP_PIN, OUTPUT);
   pinMode(LIGHT_CONTROL_PIN, OUTPUT);
+  pinMode(LIGHT_SENSOR_PIN, INPUT);
   lightOff();
   
 }
@@ -58,17 +64,40 @@ void loop() {
       last_light_sample_time = current_time;
     }
   }
+
+  // run ebb & flow pump
+  unsigned long current_millis = millis();
+  if (current_millis > ebb_flow_pump_change_millis) {
+    if (ebb_flow_pump_is_on) {
+      unsigned long interval = EEPROMReadlong(ebb_flow_pump_interval_address);
+      ebb_flow_pump_change_millis = current_millis + interval;
+      ebb_flow_pump_off();
+    }
+    else {
+      unsigned long activation_time = EEPROMReadlong(ebb_flow_pump_activation_address);
+      ebb_flow_pump_change_millis = current_millis + activation_time;
+      ebb_flow_pump_on();
+    }
+  }
   
 }
 
 void lightOn() {
   digitalWrite(LIGHT_CONTROL_PIN, LOW);
-  digitalWrite(INDICATOR_PIN, HIGH);
 }
 
 void lightOff() {
   digitalWrite(LIGHT_CONTROL_PIN, HIGH);
-  digitalWrite(INDICATOR_PIN, LOW);
+}
+
+void ebb_flow_pump_on() {
+  digitalWrite(EBB_FLOW_PUMP_PIN, HIGH);
+  ebb_flow_pump_is_on = 1;
+}
+
+void ebb_flow_pump_off() {
+  digitalWrite(EBB_FLOW_PUMP_PIN, LOW);
+  ebb_flow_pump_is_on = 0;
 }
 
 int sampleLightSensor(bool daylight_only) {

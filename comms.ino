@@ -103,6 +103,26 @@ void process_comms() {
     else if (command == "getLightSample") {
       Serial.println(sampleLightSensor((arg=="True")));
     }
+
+    else if (command == "setEbbFlowInterval") {
+      long interval = arg.toInt();
+      EEPROMWritelong(ebb_flow_pump_interval_address, interval);
+      Serial.println(EEPROMReadlong(ebb_flow_pump_interval_address));
+    }
+
+    else if (command == "setEbbFlowActivationTime") {
+      long activation = arg.toInt();
+      EEPROMWritelong(ebb_flow_pump_activation_address, activation);
+      Serial.println(EEPROMReadlong(ebb_flow_pump_activation_address));
+    }
+
+    else if (command == "getEbbFlowInterval") {
+      Serial.println(EEPROMReadlong(ebb_flow_pump_interval_address));
+    }
+
+    else if (command == "getEbbFlowActivationTime") {
+      Serial.println(EEPROMReadlong(ebb_flow_pump_activation_address));
+    }
     
   }
 }
