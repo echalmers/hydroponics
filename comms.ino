@@ -105,23 +105,23 @@ void process_comms() {
     }
 
     else if (command == "setEbbFlowInterval") {
-      long interval = arg.toInt();
+      long interval = arg.toInt() * 1000;
       EEPROMWritelong(ebb_flow_pump_interval_address, interval);
-      Serial.println(EEPROMReadlong(ebb_flow_pump_interval_address));
+      Serial.println(EEPROMReadlong(ebb_flow_pump_interval_address) / 1000);
     }
 
     else if (command == "setEbbFlowActivationTime") {
-      long activation = arg.toInt();
+      long activation = arg.toInt() * 1000;
       EEPROMWritelong(ebb_flow_pump_activation_address, activation);
-      Serial.println(EEPROMReadlong(ebb_flow_pump_activation_address));
+      Serial.println(EEPROMReadlong(ebb_flow_pump_activation_address) / 1000);
     }
 
     else if (command == "getEbbFlowInterval") {
-      Serial.println(EEPROMReadlong(ebb_flow_pump_interval_address));
+      Serial.println(EEPROMReadlong(ebb_flow_pump_interval_address) / 1000);
     }
 
     else if (command == "getEbbFlowActivationTime") {
-      Serial.println(EEPROMReadlong(ebb_flow_pump_activation_address));
+      Serial.println(EEPROMReadlong(ebb_flow_pump_activation_address) / 1000);
     }
     
   }

@@ -8,16 +8,17 @@
 #define ebb_flow_pump_activation_address 20
 #define data_start_address 64
 
-#define EBB_FLOW_PUMP_PIN 13
+#define EBB_FLOW_PUMP_PIN 8
 #define LIGHT_CONTROL_PIN 10
 #define LIGHT_SENSOR_PIN 7
+#define INDICATOR_PIN 13
 
 #define EEPROM_LENGTH 1024
 
 unsigned long reference_time;
 unsigned long reference_millis;
 
-unsigned long ebb_flow_pump_change_millis = 4000;
+unsigned long ebb_flow_pump_change_millis = 300000;
 bool ebb_flow_pump_is_on = 0;
 
 bool time_set = false;
@@ -30,8 +31,12 @@ void setup() {
   Serial.begin(9600); // opens serial port, sets data rate to 9600 bps
   pinMode(EBB_FLOW_PUMP_PIN, OUTPUT);
   pinMode(LIGHT_CONTROL_PIN, OUTPUT);
+  pinMode(INDICATOR_PIN, OUTPUT);
+  
   pinMode(LIGHT_SENSOR_PIN, INPUT);
+
   lightOff();
+  ebb_flow_pump_off();
   
 }
 
@@ -91,12 +96,14 @@ void lightOff() {
 }
 
 void ebb_flow_pump_on() {
-  digitalWrite(EBB_FLOW_PUMP_PIN, HIGH);
+  digitalWrite(EBB_FLOW_PUMP_PIN, LOW);
+  digitalWrite(INDICATOR_PIN, HIGH);
   ebb_flow_pump_is_on = 1;
 }
 
 void ebb_flow_pump_off() {
-  digitalWrite(EBB_FLOW_PUMP_PIN, LOW);
+  digitalWrite(EBB_FLOW_PUMP_PIN, HIGH);
+  digitalWrite(INDICATOR_PIN, LOW);
   ebb_flow_pump_is_on = 0;
 }
 
