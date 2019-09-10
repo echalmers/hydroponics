@@ -109,19 +109,14 @@ void process_comms() {
     // format should be: setMotorConstant [pump_no] [constant]
     else if (command == "setMotorConstant") {
       long pump_no = arg.substring(0, arg.indexOf(' ')).toInt();
-
-      //This would be moved to a seperate function if we chose the alternative method (see below). This statement is also assuming the first pump has index 1?
       long address = (12 + (pump_no * 4));
-      
-      //Isn't it impossible to store a float in a long?
-      //I guess I'll assume that the user is giving in the constant in the format WXYZ and it will be translated into WX.YZ by dividing by 100
-      //The alternative would be that we store the argument as a float and then multiply it by 100 or 1000, depending how many decimal points we want to give the value and then use the writeScalEEPROM function.
-      long constant = arg.substring(arg.indexOf(' ') + 1).toInt();
-      EEPROMWritelong(address, constant);
+      //This gives us three decimal places and allows the user to input a float
+      float constant = (arg.substring(arg.indexOf(' ') + 1).toFloat()) * 1000; 
+      long motor_const = (long)constant;
+      EEPROMWritelong(address, motor_const);
+      Serial.println(motor_const);
     }
 
-    //Do you mean from?
-    // read a pump motor constant to EEPROM
     // format should be: getMotorConstant [pump_no] [constant]
     else if (command == "getMotorConstant") {
       long pump_no = arg.substring(0, arg.indexOf(' ')).toInt();
