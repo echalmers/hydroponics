@@ -4,6 +4,7 @@
 #define light_threshold_address 4
 #define light_on_time_address 8
 #define light_off_time_address 12
+//For now, the motor consts are using adresses 12 to 64
 #define data_start_address 64
 
 #define INDICATOR_PIN 13
@@ -15,7 +16,7 @@
 unsigned long reference_time;
 unsigned long reference_millis;
 
-int pump_control_pins[3][2] = { {2, 3}, {-1, -1}, {-1, -1} };
+pump_control_pins[3][2] = { {2, 3}, {-1, -1}, {-1, -1} };
 
 bool time_set = false;
 
@@ -90,7 +91,8 @@ void dispenseMilliseconds(int pump_no, long milliseconds) {
   // lookup the control pins for the specified pump number
   int PUMP_PIN1 = pump_control_pins[pump_no][0];
   int PUMP_PIN2 = pump_control_pins[pump_no][1];
-  
+
+  //I don't understand what this means - how can we have a negative pin?
   if(PUMP_PIN2 == -1) {
        //Activate the peristaltic pump for the activation time
        digitalWrite(PUMP_PIN1, HIGH);
@@ -115,8 +117,14 @@ void dispenseMilliseconds(int pump_no, long milliseconds) {
 }
 
 void dispenseMilliliters(int pump_no, long milliliters) {
-  // read the motor constant for this motor from EEPROM
   long milliseconds;
+  //SHOULD I MOVE WHAT YOU HAVE IN COMMS (if command == "getMotorConst") TO A SEPERATE FUNCTION? 
+  //Or maybe this next part 
+  long address = (12 + (pump_no * 4));
+  float motor_const = (EEPROMReadlong(address) / 100)
+
+  //I'm so confused with all these formulas 
   // calculate the milliseconds to run: millilitres * constant / 1000
+  milliseconds = (millilitres / constant) * 1000;
   dispenseMilliseconds(pump_no, milliseconds);
 } 

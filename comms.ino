@@ -13,6 +13,7 @@ void clearEeprom() {
   }
 }
 
+
 void EEPROMWritelong(int address, long value) {
   //Decomposition from a long to 4 bytes by using bitshift.
   //One = Most significant -> Four = Least significant byte
@@ -108,16 +109,25 @@ void process_comms() {
     // format should be: setMotorConstant [pump_no] [constant]
     else if (command == "setMotorConstant") {
       long pump_no = arg.substring(0, arg.indexOf(' ')).toInt();
+
+      //This would be moved to a seperate function if we chose the alternative method (see below). This statement is also assuming the first pump has index 1?
+      long address = (12 + (pump_no * 4));
+      
+      //Isn't it impossible to store a float in a long?
+      //I guess I'll assume that the user is giving in the constant in the format WXYZ and it will be translated into WX.YZ by dividing by 100
+      //The alternative would be that we store the argument as a float and then multiply it by 100 or 1000, depending how many decimal points we want to give the value and then use the writeScalEEPROM function.
       long constant = arg.substring(arg.indexOf(' ') + 1).toInt();
-      // write to eeprom
+      EEPROMWritelong(address, constant);
     }
-    
+
+    //Do you mean from?
     // read a pump motor constant to EEPROM
     // format should be: getMotorConstant [pump_no] [constant]
     else if (command == "getMotorConstant") {
       long pump_no = arg.substring(0, arg.indexOf(' ')).toInt();
+      long address = (12 + (pump_no * 4));
       long constant = arg.substring(arg.indexOf(' ') + 1).toInt();
-      // read from eeprom and return value
+      Serial.println(EEPROMReadlong(address));
     }
     
     // dispense for a certain time
