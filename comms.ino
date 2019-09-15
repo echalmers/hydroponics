@@ -7,6 +7,19 @@ unsigned long getTimeOfDay() {
   return (getTime() % 86400);
 }
 
+unsigned long getMotorConst(int pump_no) {
+    long address = (12 + (pump_no * 4));
+    return Serial.println(EEPROMReadlong(address));
+}
+
+void setMotorConst(long pump_no, float const) {
+    long address = (12 + (pump_no * 4));
+    long motor_const = (long)constant;
+    EEPROMWritelong(address, motor_const);
+    //For all intensive testing purposes 
+    Serial.println(motor_const);
+}
+
 void clearEeprom() {
   for (int i = 0 ; i < EEPROM_LENGTH; i++) {
     EEPROM.write(i, '\0');
@@ -105,24 +118,20 @@ void process_comms() {
       Serial.println(sampleLightSensor((arg=="True")));
     }
     
-    // write a pump motor constant to EEPROM
     // format should be: setMotorConstant [pump_no] [constant]
     else if (command == "setMotorConstant") {
       long pump_no = arg.substring(0, arg.indexOf(' ')).toInt();
-      long address = (12 + (pump_no * 4));
       //This gives us three decimal places and allows the user to input a float
       float constant = (arg.substring(arg.indexOf(' ') + 1).toFloat()) * 1000; 
-      long motor_const = (long)constant;
-      EEPROMWritelong(address, motor_const);
-      Serial.println(motor_const);
+      setMotorConst(pump_no, constant);
     }
 
     // format should be: getMotorConstant [pump_no] [constant]
     else if (command == "getMotorConstant") {
       long pump_no = arg.substring(0, arg.indexOf(' ')).toInt();
-      long address = (12 + (pump_no * 4));
+      //Unecessary?
       long constant = arg.substring(arg.indexOf(' ') + 1).toInt();
-      Serial.println(EEPROMReadlong(address));
+      Serial.println(getMotorConst(pump_no));
     }
     
     // dispense for a certain time

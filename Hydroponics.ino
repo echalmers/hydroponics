@@ -117,9 +117,7 @@ void dispenseMilliseconds(int pump_no, long milliseconds) {
 
 void dispenseMilliliters(int pump_no, long milliliters) {
   long milliseconds;
-  long address = (12 + (pump_no * 4));
-  long motor_const = EEPROMReadlong(address);
-  //to 10000 or more
+  long motor_const = getMotorConst(pump_no):
 
   // calculate the milliseconds to run: millilitres * constant
   //Does this need to be divided instead?
