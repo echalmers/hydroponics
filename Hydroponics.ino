@@ -117,7 +117,7 @@ void dispenseMilliseconds(int pump_no, long milliseconds) {
 
 void dispenseMilliliters(int pump_no, long milliliters) {
   long milliseconds;
-  long motor_const = getMotorConst(pump_no):
+  long motor_const = getMotorConst(pump_no);
 
   // calculate the milliseconds to run: millilitres * constant
   //Does this need to be divided instead?

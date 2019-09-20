@@ -12,7 +12,7 @@ unsigned long getMotorConst(int pump_no) {
     return Serial.println(EEPROMReadlong(address));
 }
 
-void setMotorConst(long pump_no, float const) {
+void setMotorConst(long pump_no, float constant) {
     long address = (12 + (pump_no * 4));
     long motor_const = (long)constant;
     EEPROMWritelong(address, motor_const);
